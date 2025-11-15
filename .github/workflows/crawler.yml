@@ -1,72 +1,72 @@
-name: Hot News Crawler
+name: Hot News Crawler   名称：热点新闻爬虫   名称：热点新闻爬虫
 
-on:
-  schedule:
+on:   :
+  schedule:   时间表:
     # 我们使用的是 github 官方提供的资源来进行的推送，而每个账号的资源是限额的，为了不被官方判定为滥用而面临封号的风险，不建议比半小时更低
-    - cron: "0 * * * *" # 每小时整点运行一次(实际有偏差) 或者 "*/30 * * * *" (每半小时执行一次) 或者 "*/30 0-14 * * *"(每天早上 8 点到晚上 10 点期间，每半小时运行一次)
+    - cron: "*/60 0-14 * * *" # 每小时整点运行一次(实际有偏差) 或者 "*/30 * * * *" (每半小时执行一次) 或者 "*/30 0-14 * * *"(每天早上 8 点到晚上 10 点期间，每半小时运行一次)
   workflow_dispatch:
 
 # 添加权限设置
 permissions:
-  contents: write
+  contents: write   内容   内容:写:写
 
 jobs:
   crawl:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest   上运行   上运行:ubuntu-latest:ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout repository—name：签出存储库—name：签出存储库
+        uses: actions/checkout@v3用途用途:行动/ checkout@v3:行动/ checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up Python—name：设置Python—name：设置Python
+        uses: actions/setup-python@v4用途用途:行动/ setup-python@v4:行动/ setup-python@v4
         with:
           python-version: "3.10"
 
-      - name: Install dependencies
-        run: |
+      - name   名字: Install dependencies
+        run   运行: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Verify required files
-        run: |
+      - name   名字: Verify required files—name：校验需要的文件—name：校验需要的文件
+        run   运行: |
           echo "🔍 检查必需的配置文件..."
 
           if [ ! -f config/config.yaml ]; then
             echo "❌ 错误: config/config.yaml 文件不存在"
             echo "请参考项目文档创建配置文件"
-            exit 1
+            exit 1   出口1
           fi
 
-          if [ ! -f config/frequency_words.txt ]; then
+          if [ ! -f config/frequency_words.txt ]; then[!]-f config/frequency_words.txt]；然后
             echo "❌ 错误: config/frequency_words.txt 文件不存在"
             echo "请参考项目文档创建频率词配置文件"
-            exit 1
+            exit 1   出口1
           fi
 
           echo "✅ 配置文件检查通过"
 
-      - name: Run crawler
+      - name   名字: Run crawler
         env:
-          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          FEISHU_WEBHOOK_URL: $FEISHU_WEBHOOK_URL: ${{secrets。FEISHU_WEBHOOK_URL}}{{ secrets.FEISHU_WEBHOOK_URL }}
+          TELEGRAM_BOT_TOKEN: $TELEGRAM_BOT_TOKEN: ${{secrets。TELEGRAM_BOT_TOKEN}}{{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: $TELEGRAM_CHAT_ID: ${{secrets。TELEGRAM_CHAT_ID}}{{ secrets.TELEGRAM_CHAT_ID }}
           DINGTALK_WEBHOOK_URL: ${{ secrets.DINGTALK_WEBHOOK_URL }}
           WEWORK_WEBHOOK_URL: ${{ secrets.WEWORK_WEBHOOK_URL }}
-          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-          EMAIL_TO: ${{ secrets.EMAIL_TO }}
-          EMAIL_SMTP_SERVER: ${{ secrets.EMAIL_SMTP_SERVER }}
-          EMAIL_SMTP_PORT: ${{ secrets.EMAIL_SMTP_PORT }}
-          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-          NTFY_SERVER_URL: ${{ secrets.NTFY_SERVER_URL }}
-          NTFY_TOKEN: ${{ secrets.NTFY_TOKEN }}
-          GITHUB_ACTIONS: true
-        run: python main.py
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}EMAIL_FROM: ${{secrets。EMAIL_FROM}}
+          EMAIL_PASSWORD: $EMAIL_PASSWORD: ${{secrets。EMAIL_PASSWORD}}{{ secrets.EMAIL_PASSWORD }}
+          EMAIL_TO: $EMAIL_TO: ${{secretsEMAIL_TO}}{{ secrets.EMAIL_TO }}
+          EMAIL_SMTP_SERVER: $EMAIL_SMTP_SERVER: ${{secrets。EMAIL_SMTP_SERVER}}{{ secrets.EMAIL_SMTP_SERVER }}
+          EMAIL_SMTP_PORT: $EMAIL_SMTP_PORT: ${{secrets。EMAIL_SMTP_PORT}}{{ secrets.EMAIL_SMTP_PORT }}
+          NTFY_TOPIC: $NTFY_TOPIC: ${{secrets。NTFY_TOPIC}}{{ secrets.NTFY_TOPIC }}
+          NTFY_SERVER_URL: $NTFY_SERVER_URL: ${{secrets。NTFY_SERVER_URL}}{{ secrets.NTFY_SERVER_URL }}
+          NTFY_TOKEN: $NTFY_TOKEN: ${{secrets。NTFY_TOKEN}}{{ secrets.NTFY_TOKEN }}
+          GITHUB_ACTIONS: true   真正的
+        run   运行: python main.py   运行：python main.py
 
-      - name: Commit and push if changes
-        run: |
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'actions@github.com'
+      - name   名字: Commit and push if changes- name：提交并推送更改
+        run   运行: |
+          git config --global user.name 'GitHub Actions'git config——global user.name ‘GitHub Actions’
+          git config --global user.email 'actions@github.com'Git配置—全局用户。电子邮件“actions@github.com”
           git add -A
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto update by GitHub Actions at $(TZ=Asia/Shanghai date)" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto update by GitHub Actions at $(TZ=Asia/Shanghai date)" && git push)git diff -quiet && git diff -staged -quiet || （git commit -m “ GitHub Actions在$（TZ=亚洲/上海日期）” && git push）
